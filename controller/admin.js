@@ -207,11 +207,9 @@ class AdminController {
   async updateAdmin(req, res) {
     try {
       const { id } = req.params;
-
-      const { error } = validateAdmin(req.body);
-      if (error) {
+      if (req.body.password) {
         return res.status(400).json({
-          msg: error.details[0].message,
+          msg: "password can not be updated",
           variant: "error",
           payload: null,
         });
@@ -225,11 +223,7 @@ class AdminController {
           payload: null,
         });
 
-      req.body.password = existAdmin?.password; //
-
       const admin = await Admins.findByIdAndUpdate(id, req.body, { new: true });
-
-      console.log(admin);
 
       res.status(200).json({
         variant: "success",
