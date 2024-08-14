@@ -9,6 +9,15 @@ class AdminController {
   async getProfile(req, res) {
     try {
       const admin = await Admins.findById(req.admin.id);
+
+      if (!admin || !admin.isActive) {
+        return res.status(401).json({
+          msg: "Invalid token.",
+          variant: "error",
+          payload: null,
+        });
+      }
+
       res.status(200).json({
         variant: "success",
         msg: "Profile successfully fetched",
@@ -25,11 +34,10 @@ class AdminController {
 
   async updateProfile(req, res) {
     try {
-      const { error } = validateAdmin(req.body);
-      if (error) {
+      if (req.body.password || req.body.password === "") {
         return res.status(400).json({
+          msg: "password can not be updated",
           variant: "error",
-          msg: error.details[0].message,
           payload: null,
         });
       }
@@ -42,8 +50,6 @@ class AdminController {
           payload: null,
         });
       }
-
-      req.body.password = existAdmin?.password;
 
       const admin = await Admins.findByIdAndUpdate(
         req.admin.id,
@@ -180,7 +186,11 @@ class AdminController {
       }
 
       const token = jwt.sign(
-        { id: existAdmin._id, role: existAdmin.role },
+        {
+          id: existAdmin._id,
+          role: existAdmin.role,
+          isActive: existAdmin.isActive,
+        },
         process.env.SECRET_KEY,
         {
           expiresIn: "1d",
@@ -207,7 +217,8 @@ class AdminController {
   async updateAdmin(req, res) {
     try {
       const { id } = req.params;
-      if (req.body.password) {
+
+      if (req.body.password || req.body.password === "") {
         return res.status(400).json({
           msg: "password can not be updated",
           variant: "error",

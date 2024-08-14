@@ -9,9 +9,8 @@ router.get("/get/profile", [auth], AdminController.getProfile);
 router.patch("/update/profile", [auth], AdminController.updateProfile);
 
 // admin
-router.get("/get/admins", AdminController.get);
+router.get("/get/admins", [auth], AdminController.get);
 router.get("/get/admins/:id", AdminController.getAdmin);
-router.get("/get/admins", AdminController.get);
 router.post("/sign-up", AdminController.signUp);
 router.post("/sign-in", AdminController.signIn);
 router.patch("/update/admins/:id", AdminController.updateAdmin);

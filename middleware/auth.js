@@ -14,9 +14,29 @@ export const auth = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    req.admin = decoded;
-    next();
+    const decoded = jwt.verify(
+      token,
+      process.env.SECRET_KEY,
+      function (err, decoded) {
+        if (err) {
+          return res.status(401).json({
+            msg: "Invalid token.",
+            variant: "error",
+            payload: null,
+          });
+        }
+        if (decoded.isActive) {
+          req.admin = decoded;
+          next();
+        } else {
+          return res.status(401).json({
+            msg: "Invalid token.",
+            variant: "error",
+            payload: null,
+          });
+        }
+      }
+    );
   } catch {
     res.status(401).json({
       msg: "Invalid token.",
