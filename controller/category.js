@@ -1,5 +1,3 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { Categories, validateCategory } from "../models/categorySchema.js";
 import dotenv from "dotenv";
 

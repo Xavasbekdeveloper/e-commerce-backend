@@ -1,7 +1,9 @@
 import express from "express";
 import AdminController from "../controller/admin.js";
 import CategoryController from "../controller/category.js";
+import ProductController from "../controller/product.js";
 import { auth } from "../middleware/auth.js";
+import { upload } from "../middleware/uploader.js";
 
 const router = express.Router();
 // profile
@@ -20,5 +22,13 @@ router.get("/get/categories", CategoryController.get);
 router.post("/create/categories", [auth], CategoryController.create);
 router.patch("/update/categories/:id", CategoryController.update);
 router.delete("/delete/categories/:id", CategoryController.delete);
+
+// product
+router.get("/get/products", [auth], ProductController.get);
+router.post(
+  "/create/product",
+  [auth, upload.array("file")],
+  ProductController.create
+);
 
 export default router;
