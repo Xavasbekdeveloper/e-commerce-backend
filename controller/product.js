@@ -9,10 +9,49 @@ class ProductController {
       const { limit = 10, skip = 1 } = req.params;
 
       const products = await Products.find()
-        .populate([{ path: "categoryId", select: ["title"] }])
-        .populate([{ path: "adminId", select: ["fname", "username"] }])
-        .skip(parseInt(skip - 1) + limit)
-        .limit(parseInt(limit))
+        .populate([
+          { path: "adminId", select: ["fname", "username"] },
+          { path: "categoryId", select: ["title"] },
+        ])
+        .limit(limit)
+        .skip((skip - 1) * limit)
+        .sort({ createdAt: -1 });
+
+      if (!products.length) {
+        return res.status(400).json({
+          variant: "error",
+          msg: "Products not found",
+          innerData: [],
+        });
+      }
+
+      const total = await Products.countDocuments();
+
+      res.status(200).json({
+        variant: "success",
+        msg: "Products successfully fetched",
+        innerData: products,
+        totalCount: total,
+      });
+    } catch {
+      res.status(500).json({
+        variant: "error",
+        msg: "Server error",
+        innerData: null,
+      });
+    }
+  }
+  async getCategoryFilter(req, res) {
+    try {
+      const { limit = 10, count = 1, categoryId } = req.params;
+
+      const products = await Products.find({ categoryId })
+        .populate([
+          { path: "adminId", select: ["fname", "username"] },
+          { path: "categoryId", select: ["title"] },
+        ])
+        .limit(limit)
+        .skip((count - 1) * limit)
         .sort({ createdAt: -1 });
 
       if (!products.length) {
@@ -43,14 +82,13 @@ class ProductController {
   async create(req, res) {
     try {
       const urls = req.files.map(
-        (i) => `${req.protocol}://${req.get("host")}/upload/${i.filename}`
+        (i) => `${req.protocol}://${req.get("host")}/images/${i.filename}`
       );
 
       const newProduct = {
         ...req.body,
         urls,
         adminId: req.admin.id,
-        categoryId: req.body.categoryId,
       };
 
       const { error } = validateProduct(newProduct);
@@ -63,7 +101,10 @@ class ProductController {
         });
       }
 
-      const product = await Products.create(newProduct);
+      const product = await Products.create({
+        ...newProduct,
+        info: JSON.parse(req.body.info),
+      });
 
       res.status(201).json({
         variant: "success",

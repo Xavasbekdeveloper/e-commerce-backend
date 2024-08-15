@@ -25,9 +25,14 @@ router.delete("/delete/categories/:id", CategoryController.delete);
 
 // product
 router.get("/get/products", [auth], ProductController.get);
+router.get(
+  "/get/products/category/:categoryId",
+  [auth],
+  ProductController.getCategoryFilter
+);
 router.post(
   "/create/product",
-  [auth, upload.array("file")],
+  [auth, upload.array("photos")],
   ProductController.create
 );
 

@@ -19,7 +19,7 @@ mongoose
 app.use("/", router);
 
 app.use(express.urlencoded({ extended: true }));
-app.use("/upload", express.static("./upload"));
+app.use("/images", express.static("./files"));
 
 const PORT = process.env.PORT || 8000;
 

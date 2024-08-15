@@ -76,13 +76,13 @@ export const validateProduct = (body) => {
     oldPrice: Joi.number(),
     stock: Joi.number(),
     rating: Joi.number(),
-    view: Joi.number(),
+    view: Joi.number().allow(0),
     categoryId: Joi.string(),
     adminId: Joi.string(),
     units: Joi.string().required(),
     description: Joi.string().required(),
     urls: Joi.array().required(),
-    info: Joi.array(),
+    info: Joi.string(),
     available: Joi.boolean(),
   });
 
