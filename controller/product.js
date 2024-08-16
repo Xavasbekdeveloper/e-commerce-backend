@@ -41,6 +41,27 @@ class ProductController {
       });
     }
   }
+
+  async getOne(req, res) {
+    try {
+      const { id } = req.params;
+
+      const products = await Products.findById(id);
+
+      res.status(200).json({
+        variant: "success",
+        msg: "Product successfully fetched",
+        innerData: products,
+      });
+    } catch {
+      res.status(500).json({
+        variant: "error",
+        msg: "Server error",
+        innerData: null,
+      });
+    }
+  }
+
   async getCategoryFilter(req, res) {
     try {
       const { limit = 10, count = 1, categoryId } = req.params;
