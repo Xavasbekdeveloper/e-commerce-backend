@@ -6,7 +6,7 @@ dotenv.config();
 class ProductController {
   async get(req, res) {
     try {
-      const { limit = 10, skip = 1 } = req.params;
+      const { limit = 4, skip = 1 } = req.params;
 
       const products = await Products.find()
         .populate([
