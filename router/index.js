@@ -24,8 +24,8 @@ router.patch("/update/categories/:id", CategoryController.update);
 router.delete("/delete/categories/:id", CategoryController.delete);
 
 // product
-router.get("/get/products", [auth], ProductController.get);
-router.get("/get/product/:id", [auth], ProductController.getOne);
+router.get("/get/products", ProductController.get);
+router.get("/get/product/:id", ProductController.getOne);
 router.get(
   "/get/products/category/:categoryId",
   [auth],
